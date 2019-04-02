@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,7 +11,11 @@ namespace AmazingNodeEditor
     {
         public ConnectionPoint inPoint;
         public ConnectionPoint outPoint;
+
+        [XmlIgnore]
         public Action<Connection> OnClickRemoveConnection;
+
+        public Connection() { }
 
         public Connection(ConnectionPoint inPoint, ConnectionPoint outPoint, Action<Connection> onClickRemoveConnection)
         {

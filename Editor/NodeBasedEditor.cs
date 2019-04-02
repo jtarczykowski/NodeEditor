@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -21,6 +23,9 @@ namespace AmazingNodeEditor
 
         private Vector2 offset;
         private Vector2 drag;
+
+        private float menuBarHeight = 20f;
+        private Rect menuBar;
 
         [MenuItem("Window/NodeBasedEditor")]
         private static void OpenWindow()
@@ -68,6 +73,7 @@ namespace AmazingNodeEditor
         {
             DrawGrid(smallGridSpacing,smallGridOpacity,Color.gray);
             DrawGrid(largeGridSpacing, largeGridOpacity, Color.gray);
+            DrawMenuBar();
 
             DrawNodes();
             DrawConnections();
@@ -315,6 +321,71 @@ namespace AmazingNodeEditor
                 {
                     nodes[i].Draw();
                 }
+            }
+        }
+
+        private void DrawMenuBar()
+        {
+            menuBar = new Rect(0, 0, position.width, menuBarHeight);
+
+            GUILayout.BeginArea(menuBar, EditorStyles.toolbar);
+            GUILayout.BeginHorizontal();
+            if(GUILayout.Button(new GUIContent("Save"), EditorStyles.toolbarButton, GUILayout.Width(35)))
+            {
+                Save();
+            }
+            
+            GUILayout.Space(5);
+
+            if(GUILayout.Button(new GUIContent("Load"), EditorStyles.toolbarButton, GUILayout.Width(35)))
+            {
+                Load();
+            }
+
+            GUILayout.EndHorizontal();
+            GUILayout.EndArea();
+        }
+
+        private string nodesPath = $"{Application.streamingAssetsPath}/nodes.xml";
+        private string connectionsPath = $"{Application.streamingAssetsPath}/connections.xml";
+
+        private void Save()
+        {
+            XMLSaver.Serialize(nodes, nodesPath);
+            XMLSaver.Serialize(connections, connectionsPath);
+        }
+
+        private void Load()
+        {
+            var nodesDeserialized = XMLSaver.Deserialize<List<Node>>(nodesPath);
+            var connectionsDeserialized = XMLSaver.Deserialize<List<Connection>>(connectionsPath);
+
+            nodes = new List<Node>();
+            connections = new List<Connection>();
+
+            foreach (var node in nodesDeserialized)
+            {
+                nodes.Add(new Node(
+                node.rect.position,
+                node.rect.width,
+                node.rect.height,
+                nodeStyle,
+                selectedNodeStyle,
+                inPointStyle,
+                outPointStyle,
+                OnClickInPoint,
+                OnClickOutPoint,
+                OnClickRemoveNode,
+                node.inPoint.id,
+                node.outPoint.id
+                ));
+            }
+
+            foreach(var connection in connectionsDeserialized)
+            {
+                var inPoint = nodes.First(n => n.inPoint.id == connection.inPoint.id).inPoint;
+                var outPoint = nodes.First(n => n.outPoint.id == connection.outPoint.id).outPoint;
+                connections.Add(new Connection(inPoint, outPoint, OnClickRemoveConnection));
             }
         }
     }
