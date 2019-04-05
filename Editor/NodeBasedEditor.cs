@@ -10,66 +10,65 @@ namespace AmazingNodeEditor
 {
     public class NodeBasedEditor : EditorWindow
     {
-        private List<Node> nodes;
-        private List<Connection> connections;
+        protected List<Node> nodes;
+        protected List<Connection> connections;
 
-        private GUIStyle nodeStyle;
-        private GUIStyle selectedNodeStyle;
-        private GUIStyle inPointStyle;
-        private GUIStyle outPointStyle;
+        protected NodeStyleInfo defaultNodeStyle;
 
-        private ConnectionPoint selectedInPoint;
-        private ConnectionPoint selectedOutPoint;
+        protected ConnectionPoint selectedInPoint;
+        protected ConnectionPoint selectedOutPoint;
 
-        private Vector2 offset;
-        private Vector2 drag;
+        protected Vector2 offset;
+        protected Vector2 drag;
 
-        private float menuBarHeight = 20f;
-        private Rect menuBar;
+        protected float menuBarHeight = 20f;
+        protected Rect menuBar;
 
         [MenuItem("Window/NodeBasedEditor")]
-        private static void OpenWindow()
+        protected static void OpenWindow()
         {
             NodeBasedEditor window = GetWindow<NodeBasedEditor>();
             window.titleContent = new GUIContent("Node Based Editor");
         }
 
-        private const string defaultSkinPath = "builtin skins/darkskin/images/node1.png";
-        private const string defaultActiveSkinPath = "builtin skins/darkskin/images/node1 on.png";
-        private const string defaultInPointSkinPath = "builtin skins/darkskin/images/btn left.png";
-        private const string defaultInPointActiveSkinPath = "builtin skins/darkskin/images/btn left on.png";
-        private const string defaultOutPointSkinPath = "builtin skins/darkskin/images/btn right.png";
-        private const string defaultOutPointActiveSkinPath = "builtin skins/darkskin/images/btn right on.png";
-        private const int defaultNodeSize = 12;
-        private const int defaultPointSize = 4;
+        protected const string defaultSkinPath = "builtin skins/darkskin/images/node1.png";
+        protected const string defaultActiveSkinPath = "builtin skins/darkskin/images/node1 on.png";
+        protected const string defaultInPointSkinPath = "builtin skins/darkskin/images/btn left.png";
+        protected const string defaultInPointActiveSkinPath = "builtin skins/darkskin/images/btn left on.png";
+        protected const string defaultOutPointSkinPath = "builtin skins/darkskin/images/btn right.png";
+        protected const string defaultOutPointActiveSkinPath = "builtin skins/darkskin/images/btn right on.png";
+        protected const int defaultNodeSize = 12;
+        protected const int defaultPointSize = 4;
 
-        private void OnEnable()
+        protected void OnEnable()
         {
-            nodeStyle = new GUIStyle();
-            nodeStyle.normal.background = EditorGUIUtility.Load(defaultSkinPath) as Texture2D;
-            nodeStyle.border = new RectOffset(defaultNodeSize, defaultNodeSize, defaultNodeSize, defaultNodeSize);
+            defaultNodeStyle = new NodeStyleInfo();
 
-            selectedNodeStyle = new GUIStyle();
-            selectedNodeStyle.normal.background = EditorGUIUtility.Load(defaultSkinPath) as Texture2D;
-            selectedNodeStyle.border = new RectOffset(defaultNodeSize, defaultNodeSize, defaultNodeSize, defaultNodeSize);
+            defaultNodeStyle.defaultNodeStyle = new GUIStyle();
+            defaultNodeStyle.defaultNodeStyle.normal.background = EditorGUIUtility.Load(defaultSkinPath) as Texture2D;
+            defaultNodeStyle.defaultNodeStyle.border = new RectOffset(defaultNodeSize, defaultNodeSize, defaultNodeSize, defaultNodeSize);
 
-            inPointStyle = new GUIStyle();
-            inPointStyle.normal.background = EditorGUIUtility.Load(defaultInPointSkinPath) as Texture2D;
-            inPointStyle.active.background = EditorGUIUtility.Load(defaultInPointActiveSkinPath) as Texture2D;
-            inPointStyle.border = new RectOffset(defaultPointSize, defaultPointSize, defaultNodeSize, defaultNodeSize);
+            defaultNodeStyle.selectedNodeStyle = new GUIStyle();
+            defaultNodeStyle.selectedNodeStyle.normal.background = EditorGUIUtility.Load(defaultSkinPath) as Texture2D;
+            defaultNodeStyle.selectedNodeStyle.border = new RectOffset(defaultNodeSize, defaultNodeSize, defaultNodeSize, defaultNodeSize);
 
-            outPointStyle = new GUIStyle();
-            outPointStyle.normal.background = EditorGUIUtility.Load(defaultOutPointSkinPath) as Texture2D;
-            outPointStyle.active.background = EditorGUIUtility.Load(defaultOutPointActiveSkinPath) as Texture2D;
-            outPointStyle.border = new RectOffset(defaultPointSize, defaultPointSize, defaultNodeSize, defaultNodeSize);
+            defaultNodeStyle.inPointStyle = new GUIStyle();
+            defaultNodeStyle.inPointStyle.normal.background = EditorGUIUtility.Load(defaultInPointSkinPath) as Texture2D;
+            defaultNodeStyle.inPointStyle.active.background = EditorGUIUtility.Load(defaultInPointActiveSkinPath) as Texture2D;
+            defaultNodeStyle.inPointStyle.border = new RectOffset(defaultPointSize, defaultPointSize, defaultNodeSize, defaultNodeSize);
+
+            defaultNodeStyle.outPointStyle = new GUIStyle();
+            defaultNodeStyle.outPointStyle.normal.background = EditorGUIUtility.Load(defaultOutPointSkinPath) as Texture2D;
+            defaultNodeStyle.outPointStyle.active.background = EditorGUIUtility.Load(defaultOutPointActiveSkinPath) as Texture2D;
+            defaultNodeStyle.outPointStyle.border = new RectOffset(defaultPointSize, defaultPointSize, defaultNodeSize, defaultNodeSize);
         }
 
-        private float smallGridSpacing = 20f;
-        private float largeGridSpacing = 100f;
-        private float smallGridOpacity = 0.2f;
-        private float largeGridOpacity = 0.4f;
+        protected float smallGridSpacing = 20f;
+        protected float largeGridSpacing = 100f;
+        protected float smallGridOpacity = 0.2f;
+        protected float largeGridOpacity = 0.4f;
 
-        private void OnGUI()
+        protected void OnGUI()
         {
             DrawGrid(smallGridSpacing,smallGridOpacity,Color.gray);
             DrawGrid(largeGridSpacing, largeGridOpacity, Color.gray);
@@ -87,7 +86,7 @@ namespace AmazingNodeEditor
             }
         }
 
-        private void DrawGrid(float gridSpacing, float gridOpacity, Color color)
+        protected void DrawGrid(float gridSpacing, float gridOpacity, Color color)
         {
             int widthDivs = Mathf.CeilToInt(position.width / gridSpacing);
             int heightDivs = Mathf.CeilToInt(position.height / gridSpacing);
@@ -116,10 +115,10 @@ namespace AmazingNodeEditor
             Handles.EndGUI();
         }
 
-        private static Vector2 bezierOffset = Vector2.left * 50f;
-        private const float defaultHandleWidth = 2f;
+        protected static Vector2 bezierOffset = Vector2.left * 50f;
+        protected const float defaultHandleWidth = 2f;
 
-        private void DrawConnectionLine(Event e)
+        protected void DrawConnectionLine(Event e)
         {
             if(selectedInPoint != null && selectedOutPoint == null)
             {
@@ -144,7 +143,7 @@ namespace AmazingNodeEditor
             }
         }
 
-        private void DrawConnections()
+        protected void DrawConnections()
         {
             if(connections != null)
             {
@@ -155,7 +154,7 @@ namespace AmazingNodeEditor
             }
         }
 
-        private void ProcessNodeEvents(Event e)
+        protected void ProcessNodeEvents(Event e)
         {
             if (nodes == null)
             {
@@ -173,7 +172,7 @@ namespace AmazingNodeEditor
             }
         }
 
-        private void ProcessEvents(Event e)
+        protected void ProcessEvents(Event e)
         {
             drag = Vector2.zero;
 
@@ -200,7 +199,7 @@ namespace AmazingNodeEditor
             }
         }
 
-        private void OnDrag(Vector2 delta)
+        protected void OnDrag(Vector2 delta)
         {
             drag = delta;
 
@@ -215,7 +214,7 @@ namespace AmazingNodeEditor
             GUI.changed = true;
         }
 
-        private void ProcessContextMenu(Vector2 mousePosition)
+        protected void ProcessContextMenu(Vector2 mousePosition)
         {
             GenericMenu genericMenu = new GenericMenu();
             genericMenu.AddItem(new GUIContent("Add node"), false,
@@ -223,21 +222,19 @@ namespace AmazingNodeEditor
             genericMenu.ShowAsContext();
         }
 
-        private const float defaultNodeWidth = 200;
-        private const float defaultNodeHeight = 100;
+        protected Vector2 defaultNodeDimensions = new Vector2(200, 100);
 
-        private void OnClickAddNode(Vector2 mousePosition)
+        protected void OnClickAddNode(Vector2 mousePosition)
         {
             if (nodes == null)
             {
                 nodes = new List<Node>();
             }
 
-            nodes.Add(new Node(mousePosition, defaultNodeWidth, defaultNodeHeight, nodeStyle,
-                selectedNodeStyle, inPointStyle,outPointStyle,OnClickInPoint,OnClickOutPoint,OnClickRemoveNode));
+            nodes.Add(new Node(mousePosition, defaultNodeDimensions, defaultNodeStyle,OnClickInPoint,OnClickOutPoint,OnClickRemoveNode));
         }
 
-        private void OnClickRemoveNode(Node node)
+        protected void OnClickRemoveNode(Node node)
         {
            if(connections != null)
            {
@@ -262,7 +259,7 @@ namespace AmazingNodeEditor
            nodes.Remove(node);
         }
 
-        private void OnClickInPoint(ConnectionPoint inPoint)
+        protected void OnClickInPoint(ConnectionPoint inPoint)
         {
             selectedInPoint = inPoint;
 
@@ -277,7 +274,7 @@ namespace AmazingNodeEditor
             }
         }
 
-        private void OnClickOutPoint(ConnectionPoint outPoint)
+        protected void OnClickOutPoint(ConnectionPoint outPoint)
         {
             selectedOutPoint = outPoint;
 
@@ -292,13 +289,13 @@ namespace AmazingNodeEditor
             }
         }
 
-        private void ClearConnectionSelection()
+        protected void ClearConnectionSelection()
         {
             selectedInPoint = null;
             selectedOutPoint = null;
         }
 
-        private void CreateConnection()
+        protected void CreateConnection()
         {
             if(connections == null)
             {
@@ -308,12 +305,12 @@ namespace AmazingNodeEditor
             connections.Add(new Connection(selectedInPoint, selectedOutPoint, OnClickRemoveConnection));
         }
 
-        private void OnClickRemoveConnection(Connection connection)
+        protected void OnClickRemoveConnection(Connection connection)
         {
             connections.Remove(connection);
         }
 
-        private void DrawNodes()
+        protected void DrawNodes()
         {
             if (nodes != null)
             {
@@ -324,7 +321,7 @@ namespace AmazingNodeEditor
             }
         }
 
-        private void DrawMenuBar()
+        protected void DrawMenuBar()
         {
             menuBar = new Rect(0, 0, position.width, menuBarHeight);
 
@@ -346,16 +343,16 @@ namespace AmazingNodeEditor
             GUILayout.EndArea();
         }
 
-        private string nodesPath = $"{Application.streamingAssetsPath}/nodes.xml";
-        private string connectionsPath = $"{Application.streamingAssetsPath}/connections.xml";
+        protected string nodesPath = $"{Application.streamingAssetsPath}/nodes.xml";
+        protected string connectionsPath = $"{Application.streamingAssetsPath}/connections.xml";
 
-        private void Save()
+        protected void Save()
         {
             XMLSaver.Serialize(nodes, nodesPath);
             XMLSaver.Serialize(connections, connectionsPath);
         }
 
-        private void Load()
+        protected void Load()
         {
             var nodesDeserialized = XMLSaver.Deserialize<List<Node>>(nodesPath);
             var connectionsDeserialized = XMLSaver.Deserialize<List<Connection>>(connectionsPath);
@@ -365,14 +362,12 @@ namespace AmazingNodeEditor
 
             foreach (var node in nodesDeserialized)
             {
+                var dim = new Vector2(node.rect.width, node.rect.height);
+
                 nodes.Add(new Node(
                 node.rect.position,
-                node.rect.width,
-                node.rect.height,
-                nodeStyle,
-                selectedNodeStyle,
-                inPointStyle,
-                outPointStyle,
+                dim,
+                defaultNodeStyle,
                 OnClickInPoint,
                 OnClickOutPoint,
                 OnClickRemoveNode,

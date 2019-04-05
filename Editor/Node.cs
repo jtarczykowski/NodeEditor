@@ -33,17 +33,16 @@ namespace AmazingNodeEditor
 
         public Node() { }
 
-        public Node(Vector2 position, float width, float height, GUIStyle nodeStyle,
-            GUIStyle selectedStyle, GUIStyle inPointStyle, GUIStyle outPointStyle, 
+        public Node(Vector2 position, Vector2 dimensions, NodeStyleInfo styleInfo, 
             Action<ConnectionPoint> onClickInPoint, Action<ConnectionPoint> onClickOutPoint,
             Action<Node> onClickRemoveNode, string inPointId = null, string outPointId = null)
         {
-            rect = new Rect(position.x, position.y, width, height);
-            style = nodeStyle;
-            inPoint = new ConnectionPoint(this, ConnectionPointType.In, inPointStyle, onClickInPoint,inPointId);
-            outPoint = new ConnectionPoint(this, ConnectionPointType.Out, outPointStyle, onClickOutPoint, outPointId);
-            defaultNodeStyle = nodeStyle;
-            selectedNodeStyle = selectedStyle;
+            rect = new Rect(position.x, position.y, dimensions.x, dimensions.y);
+            style = styleInfo.defaultNodeStyle;
+            inPoint = new ConnectionPoint(this, ConnectionPointType.In, styleInfo.inPointStyle, onClickInPoint,inPointId);
+            outPoint = new ConnectionPoint(this, ConnectionPointType.Out, styleInfo.outPointStyle, onClickOutPoint, outPointId);
+            defaultNodeStyle = styleInfo.defaultNodeStyle;
+            selectedNodeStyle = styleInfo.selectedNodeStyle;
             OnRemoveNode = onClickRemoveNode;
         }
 
@@ -52,7 +51,7 @@ namespace AmazingNodeEditor
             rect.position += delta;
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             inPoint.Draw();
             outPoint.Draw();
@@ -118,5 +117,14 @@ namespace AmazingNodeEditor
         {
             OnRemoveNode?.Invoke(this);
         }
+    }
+
+    public struct NodeStyleInfo
+    {
+        public GUIStyle currentStyle;
+        public GUIStyle defaultNodeStyle;
+        public GUIStyle selectedNodeStyle;
+        public GUIStyle inPointStyle;
+        public GUIStyle outPointStyle;
     }
 }
