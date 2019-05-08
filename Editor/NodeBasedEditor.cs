@@ -40,7 +40,7 @@ namespace AmazingNodeEditor
         protected const int defaultNodeSize = 12;
         protected const int defaultPointSize = 4;
 
-        protected void OnEnable()
+        protected virtual void OnEnable()
         {
             defaultNodeStyle = new NodeStyleInfo();
 
@@ -214,7 +214,7 @@ namespace AmazingNodeEditor
             GUI.changed = true;
         }
 
-        protected void ProcessContextMenu(Vector2 mousePosition)
+        protected virtual void ProcessContextMenu(Vector2 mousePosition)
         {
             GenericMenu genericMenu = new GenericMenu();
             genericMenu.AddItem(new GUIContent("Add node"), false,
@@ -222,7 +222,17 @@ namespace AmazingNodeEditor
             genericMenu.ShowAsContext();
         }
 
-        protected Vector2 defaultNodeDimensions = new Vector2(200, 100);
+        protected Vector2 defaultNodeDimensions = new Vector2(400, 200);
+
+        protected Node CreateNode(Vector2 mousePosition)
+        {
+            return new Node(mousePosition,
+                defaultNodeDimensions,
+                defaultNodeStyle,
+                OnClickInPoint,
+                OnClickOutPoint,
+                OnClickRemoveNode);
+        }
 
         protected void OnClickAddNode(Vector2 mousePosition)
         {
@@ -231,7 +241,7 @@ namespace AmazingNodeEditor
                 nodes = new List<Node>();
             }
 
-            nodes.Add(new Node(mousePosition, defaultNodeDimensions, defaultNodeStyle,OnClickInPoint,OnClickOutPoint,OnClickRemoveNode));
+            nodes.Add(CreateNode(mousePosition));
         }
 
         protected void OnClickRemoveNode(Node node)

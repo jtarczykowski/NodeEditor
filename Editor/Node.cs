@@ -80,7 +80,7 @@ namespace AmazingNodeEditor
                         }
                     }
 
-                    if(e.button == 1 && isSelected && rect.Contains(e.mousePosition))
+                    if(e.button == 1 && rect.Contains(e.mousePosition))
                     {
                         ProcessContextMenu();
                         e.Use();
@@ -105,15 +105,15 @@ namespace AmazingNodeEditor
             return false;
         }
 
-        private const string removeNodeText = "Remove node";
-        private void ProcessContextMenu()
+        protected const string removeNodeText = "Remove node";
+        protected virtual void ProcessContextMenu()
         {
             GenericMenu genericMenu = new GenericMenu();
             genericMenu.AddItem(new GUIContent(removeNodeText), false, OnClickRemoveNode);
             genericMenu.ShowAsContext();
         }
 
-        private void OnClickRemoveNode()
+        protected void OnClickRemoveNode()
         {
             OnRemoveNode?.Invoke(this);
         }
