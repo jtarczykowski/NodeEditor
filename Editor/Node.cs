@@ -22,11 +22,7 @@ namespace AmazingNodeEditor
         public NodeConnectionPoint outPoint;
 
         [XmlIgnore]
-        public GUIStyle style;
-        [XmlIgnore]
-        public GUIStyle defaultNodeStyle;
-        [XmlIgnore]
-        public GUIStyle selectedNodeStyle;
+        public NodeStyleInfo style;
 
         [XmlIgnore]
         public Action<Node> OnRemoveNode;
@@ -38,12 +34,10 @@ namespace AmazingNodeEditor
             Action<Node> onClickRemoveNode, string inPointId = null, string outPointId = null)
         {
             rect = new Rect(position.x, position.y, dimensions.x, dimensions.y);
-            style = styleInfo.defaultNodeStyle;
             inPoint = new NodeConnectionPoint(this, ConnectionPointType.In, styleInfo.inPointStyle, onClickInPoint,inPointId);
             outPoint = new NodeConnectionPoint(this, ConnectionPointType.Out, styleInfo.outPointStyle, onClickOutPoint, outPointId);
-            defaultNodeStyle = styleInfo.defaultNodeStyle;
-            selectedNodeStyle = styleInfo.selectedNodeStyle;
             OnRemoveNode = onClickRemoveNode;
+            style = styleInfo;
         }
 
         public void Drag(Vector2 delta)
@@ -55,7 +49,8 @@ namespace AmazingNodeEditor
         {
             inPoint.Draw();
             outPoint.Draw();
-            GUI.Box(rect, title, style);
+            var currentStyle = isSelected ? style.selectedNodeStyle : style.defaultNodeStyle;
+            GUI.Box(rect, title, currentStyle);
         }
 
         public bool ProcessEvents(Event e)
@@ -70,13 +65,11 @@ namespace AmazingNodeEditor
                             isDragged = true;
                             GUI.changed = true;
                             isSelected = true;
-                            style = selectedNodeStyle;
                         }
                         else
                         {
                             GUI.changed = true;
                             isSelected = false;
-                            style = defaultNodeStyle;
                         }
                     }
 
