@@ -15,8 +15,8 @@ namespace AmazingNodeEditor
 
         protected NodeStyleInfo defaultNodeStyle;
 
-        protected ConnectionPoint selectedInPoint;
-        protected ConnectionPoint selectedOutPoint;
+        protected NodeConnectionPoint selectedInPoint;
+        protected NodeConnectionPoint selectedOutPoint;
 
         protected Vector2 offset;
         protected Vector2 drag;
@@ -269,9 +269,9 @@ namespace AmazingNodeEditor
            nodes.Remove(node);
         }
 
-        protected void OnClickInPoint(ConnectionPoint inPoint)
+        protected void OnClickInPoint(ConnectionPointBase inPoint)
         {
-            selectedInPoint = inPoint;
+            selectedInPoint = inPoint as NodeConnectionPoint;
 
             if(selectedOutPoint != null)
             {
@@ -284,9 +284,9 @@ namespace AmazingNodeEditor
             }
         }
 
-        protected void OnClickOutPoint(ConnectionPoint outPoint)
+        protected void OnClickOutPoint(ConnectionPointBase outPoint)
         {
-            selectedOutPoint = outPoint;
+            selectedOutPoint = outPoint as NodeConnectionPoint;
 
             if (selectedInPoint != null)
             {

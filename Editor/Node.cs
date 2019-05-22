@@ -18,8 +18,8 @@ namespace AmazingNodeEditor
         [XmlIgnore]
         public bool isSelected;
 
-        public ConnectionPoint inPoint;
-        public ConnectionPoint outPoint;
+        public NodeConnectionPoint inPoint;
+        public NodeConnectionPoint outPoint;
 
         [XmlIgnore]
         public GUIStyle style;
@@ -34,13 +34,13 @@ namespace AmazingNodeEditor
         public Node() { }
 
         public Node(Vector2 position, Vector2 dimensions, NodeStyleInfo styleInfo, 
-            Action<ConnectionPoint> onClickInPoint, Action<ConnectionPoint> onClickOutPoint,
+            Action<ConnectionPointBase> onClickInPoint, Action<ConnectionPointBase> onClickOutPoint,
             Action<Node> onClickRemoveNode, string inPointId = null, string outPointId = null)
         {
             rect = new Rect(position.x, position.y, dimensions.x, dimensions.y);
             style = styleInfo.defaultNodeStyle;
-            inPoint = new ConnectionPoint(this, ConnectionPointType.In, styleInfo.inPointStyle, onClickInPoint,inPointId);
-            outPoint = new ConnectionPoint(this, ConnectionPointType.Out, styleInfo.outPointStyle, onClickOutPoint, outPointId);
+            inPoint = new NodeConnectionPoint(this, ConnectionPointType.In, styleInfo.inPointStyle, onClickInPoint,inPointId);
+            outPoint = new NodeConnectionPoint(this, ConnectionPointType.Out, styleInfo.outPointStyle, onClickOutPoint, outPointId);
             defaultNodeStyle = styleInfo.defaultNodeStyle;
             selectedNodeStyle = styleInfo.selectedNodeStyle;
             OnRemoveNode = onClickRemoveNode;

@@ -9,15 +9,15 @@ namespace AmazingNodeEditor
 {
     public class Connection
     {
-        public ConnectionPoint inPoint;
-        public ConnectionPoint outPoint;
+        public NodeConnectionPoint inPoint;
+        public NodeConnectionPoint outPoint;
 
         [XmlIgnore]
         public Action<Connection> OnClickRemoveConnection;
 
         public Connection() { }
 
-        public Connection(ConnectionPoint inPoint, ConnectionPoint outPoint, Action<Connection> onClickRemoveConnection)
+        public Connection(NodeConnectionPoint inPoint, NodeConnectionPoint outPoint, Action<Connection> onClickRemoveConnection)
         {
             this.inPoint = inPoint;
             this.outPoint = outPoint;
