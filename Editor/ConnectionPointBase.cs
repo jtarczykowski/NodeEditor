@@ -36,7 +36,6 @@ namespace AmazingNodeEditor
             this.id = id ?? Guid.NewGuid().ToString();
         }
 
-        private float connectionDistanceFromBox = 8f;
         public void Draw()
         {
             rect = GetButtonRect;

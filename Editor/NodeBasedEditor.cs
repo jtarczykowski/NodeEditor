@@ -31,36 +31,9 @@ namespace AmazingNodeEditor
             window.titleContent = new GUIContent("Node Based Editor");
         }
 
-        protected const string defaultSkinPath = "builtin skins/darkskin/images/node1.png";
-        protected const string defaultActiveSkinPath = "builtin skins/darkskin/images/node1 on.png";
-        protected const string defaultInPointSkinPath = "builtin skins/darkskin/images/btn left.png";
-        protected const string defaultInPointActiveSkinPath = "builtin skins/darkskin/images/btn left on.png";
-        protected const string defaultOutPointSkinPath = "builtin skins/darkskin/images/btn right.png";
-        protected const string defaultOutPointActiveSkinPath = "builtin skins/darkskin/images/btn right on.png";
-        protected const int defaultNodeSize = 12;
-        protected const int defaultPointSize = 4;
-
         protected virtual void OnEnable()
         {
-            defaultNodeStyle = new NodeStyleInfo();
-
-            defaultNodeStyle.defaultNodeStyle = new GUIStyle();
-            defaultNodeStyle.defaultNodeStyle.normal.background = EditorGUIUtility.Load(defaultSkinPath) as Texture2D;
-            defaultNodeStyle.defaultNodeStyle.border = new RectOffset(defaultNodeSize, defaultNodeSize, defaultNodeSize, defaultNodeSize);
-
-            defaultNodeStyle.selectedNodeStyle = new GUIStyle();
-            defaultNodeStyle.selectedNodeStyle.normal.background = EditorGUIUtility.Load(defaultSkinPath) as Texture2D;
-            defaultNodeStyle.selectedNodeStyle.border = new RectOffset(defaultNodeSize, defaultNodeSize, defaultNodeSize, defaultNodeSize);
-
-            defaultNodeStyle.inPointStyle = new GUIStyle();
-            defaultNodeStyle.inPointStyle.normal.background = EditorGUIUtility.Load(defaultInPointSkinPath) as Texture2D;
-            defaultNodeStyle.inPointStyle.active.background = EditorGUIUtility.Load(defaultInPointActiveSkinPath) as Texture2D;
-            defaultNodeStyle.inPointStyle.border = new RectOffset(defaultPointSize, defaultPointSize, defaultNodeSize, defaultNodeSize);
-
-            defaultNodeStyle.outPointStyle = new GUIStyle();
-            defaultNodeStyle.outPointStyle.normal.background = EditorGUIUtility.Load(defaultOutPointSkinPath) as Texture2D;
-            defaultNodeStyle.outPointStyle.active.background = EditorGUIUtility.Load(defaultOutPointActiveSkinPath) as Texture2D;
-            defaultNodeStyle.outPointStyle.border = new RectOffset(defaultPointSize, defaultPointSize, defaultNodeSize, defaultNodeSize);
+            defaultNodeStyle = EditorConfig.CreateDefaultNodeStyle();
         }
 
         protected float smallGridSpacing = 20f;
@@ -70,8 +43,8 @@ namespace AmazingNodeEditor
 
         protected void OnGUI()
         {
-            DrawGrid(smallGridSpacing,smallGridOpacity,Color.gray);
-            DrawGrid(largeGridSpacing, largeGridOpacity, Color.gray);
+            GridDrawer.DrawGrid(smallGridSpacing,smallGridOpacity, position, ref offset,ref drag);
+            GridDrawer.DrawGrid(largeGridSpacing, largeGridOpacity, position, ref offset, ref drag);
             DrawMenuBar();
 
             DrawNodes();
@@ -84,35 +57,6 @@ namespace AmazingNodeEditor
             {
                 Repaint();
             }
-        }
-
-        protected void DrawGrid(float gridSpacing, float gridOpacity, Color color)
-        {
-            int widthDivs = Mathf.CeilToInt(position.width / gridSpacing);
-            int heightDivs = Mathf.CeilToInt(position.height / gridSpacing);
-
-            Handles.BeginGUI();
-            Handles.color = new Color(color.r, color.g, color.b, gridOpacity);
-
-            offset += drag * 0.5f;
-            var newOffset = new Vector3(offset.x % gridSpacing, offset.y % gridSpacing, 0);
-
-            for(int i = 0; i < widthDivs; ++i)
-            {
-                var beg = new Vector3(gridSpacing * i, -gridSpacing, 0f) + newOffset;
-                var end = new Vector3(gridSpacing * i, position.height, 0f) + newOffset;
-                Handles.DrawLine(beg, end);
-            }
-
-            for (int j = 0; j < heightDivs; ++j)
-            {
-                var beg = new Vector3(-gridSpacing, gridSpacing * j, 0f) + newOffset;
-                var end = new Vector3(position.width,gridSpacing * j, 0f) + newOffset;
-                Handles.DrawLine(beg, end);
-            }
-
-            Handles.color = Color.white;
-            Handles.EndGUI();
         }
 
         protected static Vector2 bezierOffset = Vector2.left * 50f;
