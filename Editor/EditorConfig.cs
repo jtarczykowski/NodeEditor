@@ -16,6 +16,11 @@ namespace AmazingNodeEditor
         public const int defaultNodeSize = 12;
         public const int defaultPointSize = 4;
 
+        public const float smallGridSpacing = 20f;
+        public const float largeGridSpacing = 100f;
+        public const float smallGridOpacity = 0.2f;
+        public const float largeGridOpacity = 0.4f;
+
         public static Color gridColor;
 
         public static NodeStyleInfo CreateDefaultNodeStyle()

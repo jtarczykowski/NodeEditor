@@ -36,15 +36,10 @@ namespace AmazingNodeEditor
             defaultNodeStyle = EditorConfig.CreateDefaultNodeStyle();
         }
 
-        protected float smallGridSpacing = 20f;
-        protected float largeGridSpacing = 100f;
-        protected float smallGridOpacity = 0.2f;
-        protected float largeGridOpacity = 0.4f;
-
         protected void OnGUI()
         {
-            GridDrawer.DrawGrid(smallGridSpacing,smallGridOpacity, position, ref offset,ref drag);
-            GridDrawer.DrawGrid(largeGridSpacing, largeGridOpacity, position, ref offset, ref drag);
+            GridDrawer.DrawGrid(EditorConfig.smallGridSpacing, EditorConfig.smallGridOpacity, position, ref offset,ref drag);
+            GridDrawer.DrawGrid(EditorConfig.largeGridSpacing, EditorConfig.largeGridOpacity, position, ref offset, ref drag);
             DrawMenuBar();
 
             DrawNodes();
